@@ -27,7 +27,7 @@ import java.util.TreeMap;
 /**
  * Classe que encapsula uma árvore binária de buscas
  */
-class ABB<T> {
+public class ABB<T> {
 
     private TreeMap<Integer, T> data;
 
@@ -78,6 +78,13 @@ class ABB<T> {
     }
 
     /**
+     * Retorna o elemento caso ele exista na árvore, ou null caso contrário
+     */
+    public T contains(int key) {
+        return this.data.containsKey(key) ? this.data.get(key) : null;
+    }
+
+    /**
      * Retorna a quantidade de elementos da árvore
      * 
      * @return Quantidade de elementos da árvore (int)
@@ -98,5 +105,9 @@ class ABB<T> {
     public T[] allElements(T[] array) {
         T[] allData = this.data.values().toArray(array);
         return allData;
+    }
+
+    public boolean isEmpty() {
+        return this.data.isEmpty();
     }
 }

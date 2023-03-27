@@ -25,7 +25,7 @@ import java.util.LinkedList;
  */
 
 /** Classe para encapsular uma lista duplamente encadeada */
-class Lista<T> {
+public class Lista<T> {
 
     private LinkedList<T> data;
 
@@ -57,8 +57,7 @@ class Lista<T> {
      * @return Outro vetor/array com os elementos da lista.
      */
     public T[] allElements(T[] array) {
-        T[] allData = this.data.toArray(array);
-        return allData;
+        return this.data.toArray(array);
     }
 
     /**
@@ -84,6 +83,17 @@ class Lista<T> {
      */
     public int size() {
         return this.data.size();
+    }
+
+    /**
+     * Retorna o elemento da lista na posição indicada. Retorna nulo caso a posição
+     * não exista na lista.
+     * 
+     * @param i Chave do elemento a ser retornado.
+     * @return O elemento na posição indicada, ou null se ele não existir na lista
+     */
+    public T get(int i) {
+        return this.data.get(i);
     }
 
 }
