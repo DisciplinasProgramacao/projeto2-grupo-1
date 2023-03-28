@@ -1,4 +1,4 @@
-/** 
+/**
  * MIT License
  *
  * Copyright(c) 2021 João Caram <caram@pucminas.br>
@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -22,61 +22,45 @@
  * SOFTWARE.
  */
 
- class Aresta {
+public class Aresta {
 
+    private boolean filho;
     private int peso;
     private int destino;
-    private boolean visitada;
 
     /**
      * Construtor para arestas com peso. A aresta é criada como não-visitada.
-     * @param peso Peso da aresta
-     * @param dest Vértice de destino
+     * 
+     * @param peso  Peso da aresta
+     * @param dest  Vértice de destino
+     * @param filho Indica se a aresta é filho ou não
      */
-    public Aresta(int peso, int destino){
+    public Aresta(int peso, int destino, boolean filho) {
         this.peso = peso;
         this.destino = destino;
-        this.visitada = false;
+        this.filho = filho;
     }
 
     /**
      * Método de acesso para o peso da aresta
+     * 
      * @return Peso da aresta (int)
      */
     public int peso() {
         return this.peso;
     }
-   
+
     /**
      * Método de acesso para o destino da aresta
+     * 
      * @return Id do vértice de destino
      */
     public int destino() {
         return this.destino;
     }
 
-    /**
-     * Marca a aresta como visitada
-     */
-    public void visitar(){
-        this.visitada = true;
+    public boolean filho() {
+        return this.filho;
     }
-
-    /**
-     * Marca a aresta como não visitada
-     */
-    public void limparVisita(){
-        this.visitada = false;
-    }
-
-    /**
-     * Indica se a aresta foi visitada (TRUE) ou não (FALSE)
-     * @return TRUE/FALSE conforme a aresta foi visitada ou não.
-     */
-    public boolean visitada(){
-        return this.visitada;
-    }
-
-    
 
 }
