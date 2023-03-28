@@ -1,0 +1,2 @@
+0 1 0 !Arquivo de exemplo para leirura de grafos, gera um grafo {{0, 1}, {2, 0}}
+2 0 0 !Ou {(0, 1), (2, 0)} caso seja um grafo direcionado

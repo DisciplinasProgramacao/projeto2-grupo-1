@@ -4,33 +4,47 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class GrafoDirecionado extends GrafoMutável {
+public class GrafoMutável extends Grafo {
 
     /**
-     * Construtor do grafo direcionado
+     * Construtor. Cria um grafo vazio com um nome escolhido pelo usuário. Em caso
+     * de nome não informado
      * 
-     * @param nome Nome do grafo
+     * @param nome        O nome do grafo
+     * @param direcionado TRUE se o grafo for direcionado, FALSE caso contrário
      */
-    public GrafoDirecionado(String nome) {
+    public GrafoMutável(String nome) {
         super(nome);
     }
 
     /**
-     * Adiciona uma aresta ao grafo
+     * Remove um vértice com o id especificado. Ignora a ação e retorna NULL se não
+     * existir um vértice com este id
+     * 
+     * @param id O identificador do vértice a ser removido
+     * @return O vértice removido, ou NULL se não existia vértice com este id
+     */
+    protected Vértice removeVertice(int id) {
+        return vertices.remove(id);
+    }
+
+    /**
+     * Remove uma aresta entre dois vértices do grafo, caso os dois vértices existam
+     * no grafo.
+     * Caso a aresta não exista, ou algum dos vértices não existir, o comando é
+     * ignorado e retorna NULL.
      * 
      * @param origem  Vértice de origem
      * @param destino Vértice de destino
-     * @param peso    Peso da aresta
-     * @return TRUE se a aresta for adicionada, FALSE caso contrário
+     * @return A aresta removida, ou NULL caso contrário
      */
-    @Override
-    public boolean addAresta(int origem, int destino, int peso) {
-        boolean adicionou = false;
+    protected void removeAresta(int origem, int destino) {
         Vértice saida = this.existeVertice(origem);
         Vértice chegada = this.existeVertice(destino);
-        if (saida != null && chegada != null)
-            adicionou = (saida.addAresta(destino, peso, false) && chegada.addAresta(origem, peso, true));
-        return adicionou;
+        if (saida != null && chegada != null) {
+            saida.removeAresta(destino);
+            chegada.removeAresta(origem);
+        } 
     }
 
     /**
@@ -38,8 +52,7 @@ public class GrafoDirecionado extends GrafoMutável {
      * método carregar, para se o usuário pressionar enter vazio.
      * 
      */
-    @Override
-    public void criar() {
+    protected void criar() {
         System.out.println(
                 " Formato: 0 1 10, em que 0 e 1 são os vértices e 10 o peso da aresta, pressione enter para finalizar");
         while (true) {
@@ -66,14 +79,32 @@ public class GrafoDirecionado extends GrafoMutável {
     }
 
     /**
+     * Gera um subgrafo do grafo atual, contendo apenas os vértices e arestas
+     * que estão na lista de vértices passada como parâmetro
+     * 
+     * @param lista_v Lista de vértices a serem incluídos no subgrafo
+     * @return O subgrafo gerado
+     */
+    protected GrafoMutável subGrafo(Lista<Integer> lista_v) {
+        GrafoMutável subgrafo = new GrafoMutável("Subgrafo de " + this.nome);
+        for (int id : lista_v.allElements(new Integer[lista_v.size()]))
+            if (this.existeVertice(id) != null)
+                subgrafo.addVertice(id);
+        for (int id : lista_v.allElements(new Integer[lista_v.size()]))
+            for (Aresta a : this.existeVertice(id).getArestas())
+                if (subgrafo.existeVertice(a.destino()) != null)
+                    subgrafo.addAresta(subgrafo.existeVertice(id).getId(), a.destino(), a.peso());
+        return subgrafo;
+    }
+
+    /**
      * Carrega um grafo a partir de um arquivo de texto.
      * Formato: 0 1 10
      * Em que 0 e 1 são os vértices e 10 é o peso da aresta entre eles.
      * 
      * @param nomeArquivo Nome do arquivo a ser carregado
      */
-    @Override
-    public void carregar(String nomeArquivo) {
+    protected void carregar(String nomeArquivo) {
         System.out.println("\n\n");
         try {
             BufferedReader br = new BufferedReader(new FileReader(nomeArquivo));
@@ -106,12 +137,12 @@ public class GrafoDirecionado extends GrafoMutável {
      * 
      * @param nomeArquivo Nome do arquivo a ser salvo
      */
-    public void salvar(String nomeArquivo) {
+    protected void salvar(String nomeArquivo) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(nomeArquivo));
             for (Vértice v : this.vertices.allElements(new Vértice[this.vertices.size()]))
                 for (Aresta a : v.getArestas())
-                    if (!a.filho()) {
+                    if (a.destino() < v.getId()) {
                         bw.write(v.getId() + " " + a.destino() + " " + a.peso());
                         bw.newLine();
                     }
@@ -121,29 +152,4 @@ public class GrafoDirecionado extends GrafoMutável {
         }
     }
 
-    /**
-     * Retorna uma representação em String do grafo
-     * { {id1, id2, peso1}, {id3, id4, peso2}, ... }
-     * 
-     * @return A representação em String do grafo
-     */
-    @Override
-    public String toString() {
-        StringBuilder str = new StringBuilder("Grafo " + this.nome + ": {");
-        Vértice[] vertices = this.vertices.allElements(new Vértice[this.vertices.size()]);
-        for (int i = 0; i < vertices.length; i++) {
-            Vértice v = vertices[i];
-            Aresta[] arestas = v.getArestas();
-            for (int j = 0; j < arestas.length; j++) {
-                Aresta a = arestas[j];
-                if (!a.filho()) {
-                    str.append("(" + v.getId() + ", " + a.destino() + ", " + a.peso() + ")");
-                    if (j < arestas.length - 1 || i < vertices.length - 1)
-                        str.append(", ");
-                }
-            }
-        }
-        str.append("}");
-        return new String(str);
-    }
 }
