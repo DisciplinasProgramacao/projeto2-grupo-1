@@ -1,11 +1,10 @@
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
+import static org.junit.Assert.*;
+import org.junit.jupiter.api.*;
 
-class Teste {
+/**
+ * Classe de testes
+ */
+class Testes {
 
     /**
      * Grafo mutável não direcionado para testes
@@ -18,7 +17,7 @@ class Teste {
      */
     @BeforeEach
     void setUp() {
-        grafo = new GrafoMutável("");
+        grafo = new GrafoMutável("GrafoTeste");
         for (int i = 0; i < 3; i++)
             grafo.addVertice(i);
         grafo.addAresta(0, 1, -1);
@@ -41,8 +40,8 @@ class Teste {
      */
     @Test
     void testSalvarECarregar() {
-        grafo.salvar("");
-        grafo.carregar("");
+        grafo.salvar("GrafoTeste.txt");
+        grafo.carregar("GrafoTeste.txt");
         int tst[][] = { { 0, 1 }, { 0, 2 }, { 1, 2 } };
         for (int[] i : tst)
             assertNotNull(grafo.existeAresta(i[0], i[1]));
@@ -53,7 +52,7 @@ class Teste {
      */
     @Test
     void testToString() {
-        assertEquals("Grafo Grafo: {{0, 1}, {0, 2}, {1, 2}}", grafo.toString());
+        assertEquals("Grafo \"GrafoTeste\": {{0, 1}, {0, 2}, {1, 2}}", grafo.toString());
     }
 
     /**
@@ -61,14 +60,14 @@ class Teste {
      */
     @Test
     void testToStringDirecionado() {
-        GrafoDirecionado grafo = new GrafoDirecionado("");
-        grafo.addVertice(0);
-        grafo.addVertice(1);
-        grafo.addVertice(2);
-        grafo.addAresta(0, 1, -1);
-        grafo.addAresta(2, 0, -1);
-        grafo.addAresta(1, 2, -1);
-        assertEquals("Grafo Grafo: {(0, 1), (1, 2), (2, 0)}", grafo.toString());
+        GrafoDirecionado grafo = new GrafoDirecionado("GrafoTeste");
+        grafo.addVertice(3);
+        grafo.addVertice(4);
+        grafo.addVertice(5);
+        grafo.addAresta(3, 4, -1);
+        grafo.addAresta(5, 3, -1);
+        grafo.addAresta(4, 5, -1);
+        assertEquals("Grafo \"GrafoTeste\": {(3, 4), (4, 5), (5, 3)}", grafo.toString());
     }
 
     /**
@@ -109,10 +108,10 @@ class Teste {
      */
     @Test
     void testRemoverAresta() {
-        Vértice vertice = new Vértice(0);
-        vertice.addAresta(1, 10);
-        vertice.removeAresta(1);
-        assertNull(vertice.existeAresta(1));
+        Vértice vertice = new Vértice(10);
+        vertice.addAresta(11, -1);
+        vertice.removeAresta(11);
+        assertNull(vertice.getAresta(11));
     }
 
     /**
@@ -124,4 +123,39 @@ class Teste {
         assertTrue(aresta.filho());
     }
 
+    /**
+     * Teste de remoção de vértice
+     */
+    @Test
+    void testRemoverVertice() {
+        grafo.removeVertice(0);
+        assertNull(grafo.getVertice(0));
+    }
+
+    /**
+     * Teste de remoção de vértice com arestas
+     */
+    @Test
+    void testRemoverVerticeComArestas() {
+        grafo.removeVertice(0);
+        assertNull(grafo.getVertice(0));
+        assertNull(grafo.existeAresta(0, 1));
+        assertNull(grafo.existeAresta(0, 2));
+    }
+
+    /**
+     * Teste da buscaEmLargura
+     */
+    @Test
+    void testBuscaEmLargura() {
+        assertEquals(grafo.buscaEmLargura(0, 2).getId(), 2);
+    }
+
+    /**
+     * Teste da buscaEmProfundidade
+     */
+    @Test
+    void testBuscaEmProfundidade() {
+        assertEquals(grafo.buscaEmProfundidade(0, 2).getId(), 2);
+    }
 }
