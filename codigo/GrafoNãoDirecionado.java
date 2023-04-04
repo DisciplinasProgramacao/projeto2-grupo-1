@@ -1,3 +1,7 @@
+
+/**
+ * Grafo não direcionado
+ */
 public class GrafoNãoDirecionado extends GrafoMutável {
 
     /**

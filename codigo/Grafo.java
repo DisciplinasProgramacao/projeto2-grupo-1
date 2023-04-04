@@ -1,3 +1,10 @@
+import java.util.TreeMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Stack;
+
 /** 
  * MIT License
  *
@@ -23,48 +30,60 @@
  */
 
 /**
- * Classe básica para um Grafo simples não direcionado.
+ * Classe básica para todos os grafos. Esta classe define os métodos básicos
+ * para
+ * a manipulação de grafos, como a inserção de vértices e arestas, e a
+ * verificação de existência de vértices e arestas.
  */
-public class Grafo {
-    protected final String nome;
-    protected ABB<Vértice> vertices;
+abstract public class Grafo {
 
     /**
-     * Construtor. Cria um grafo vazio com um nome escolhido pelo usuário. Em caso
-     * de nome não informado
-     * (string vazia), recebe o nome genérico "Grafo"
+     * Armazena o nome do grafo
      */
-    public Grafo(String nome) {
-        if (nome == null || nome.isEmpty())
-            this.nome = "Grafo";
-        else
-            this.nome = nome;
-        this.vertices = new ABB<>();
+    protected final String NOME;
+
+    /**
+     * Armazena os vértices do grafo
+     */
+    protected TreeMap<Integer, Vértice> vértices;
+
+    /**
+     * Construtor. Cria um grafo vazio com um NOME escolhido pelo usuário. Em caso
+     * de NOME não informado (string vazia), recebe o NOME genérico "Grafo"
+     * 
+     * @param NOME Nome do grafo
+     */
+    public Grafo(String NOME) {
+        this.NOME = NOME;
+        this.vértices = new TreeMap<Integer, Vértice>();
     }
 
     /**
-     * Adiciona um vértice com o id especificado. Ignora a ação e retorna false se
-     * já existir um vértice com este id
+     * Adiciona um vértice ao grafo. Caso o vértice já exista, o comando é ignorado
+     * e
+     * retorna FALSE.
      * 
-     * @param id O identificador do vértice a ser criado/adicionado
-     * @return TRUE se houve a inclusão do vértice, FALSE se já existia vértice com
-     *         este id
+     * @param id O identificador do vértice a ser adicionado
+     * @return TRUE se foi inserido, FALSE caso contrário
      */
     protected boolean addVertice(int id) {
-        Vértice novo = new Vértice(id);
-        return this.vertices.add(id, novo);
+        boolean result = false;
+        if (!this.vértices.containsKey(id)) {
+            this.vértices.put(id, new Vértice(id));
+            result = true;
+        }
+        return result;
     }
 
     /**
-     * Retorna o vértice com o id especificado. Retorna NULL se não existir um
-     * vértice com este id
+     * Retorna um vértice do grafo, caso ele exista. Caso o vértice não exista, o
+     * comando é ignorado e retorna NULL.
      * 
-     * @param id O identificador do vértice a ser retornado
-     * @return O vértice com o id especificado, ou NULL se não existia vértice com
-     *         este id
+     * @param idVertice O identificador do vértice a ser retornado
+     * @return O vértice, ou NULL caso contrário
      */
-    protected Vértice existeVertice(int idVertice) {
-        return vertices.contains(idVertice);
+    protected Vértice getVertice(int idVertice) {
+        return this.vértices.containsKey(idVertice) ? this.vértices.get(idVertice) : null;
     }
 
     /**
@@ -80,29 +99,29 @@ public class Grafo {
      */
     protected boolean addAresta(int origem, int destino, int peso) {
         boolean adicionou = false;
-        Vértice saida = this.existeVertice(origem);
-        Vértice chegada = this.existeVertice(destino);
+        Vértice saida = this.getVertice(origem);
+        Vértice chegada = this.getVertice(destino);
         if (saida != null && chegada != null)
             adicionou = (saida.addAresta(destino, peso) && chegada.addAresta(origem, peso));
         return adicionou;
     }
 
     /**
-     * Retorna a aresta entre dois vértices do grafo, caso os dois vértices existam
-     * no grafo.
+     * Retorna uma aresta entre dois vértices do grafo, caso os dois vértices
+     * existam no grafo.
      * Caso a aresta não exista, ou algum dos vértices não existir, o comando é
      * ignorado e retorna NULL.
      * 
-     * @param origem  Vértice de origem
-     * @param destino Vértice de destino
+     * @param verticeA Vértice de origem
+     * @param verticeB Vértice de destino
      * @return A aresta, ou NULL caso contrário
      */
     protected Aresta existeAresta(int verticeA, int verticeB) {
         Aresta aresta = null;
-        Vértice saida = this.existeVertice(verticeA);
-        Vértice chegada = this.existeVertice(verticeB);
+        Vértice saida = this.getVertice(verticeA);
+        Vértice chegada = this.getVertice(verticeB);
         if (saida != null && chegada != null) {
-            aresta = saida.existeAresta(verticeB);
+            aresta = saida.getAresta(verticeB);
         }
         return aresta;
     }
@@ -114,8 +133,7 @@ public class Grafo {
      */
     protected int tamanho() {
         int tamanho = 0;
-        for (int i = 0; i < this.vertices.size(); i++) {
-            Vértice v = this.vertices.contains(i);
+        for (Vértice v : this.vértices.values()) {
             tamanho += v.grau();
         }
         return tamanho / 2;
@@ -127,7 +145,7 @@ public class Grafo {
      * @return A ordem do grafo
      */
     protected int ordem() {
-        return this.vertices.size();
+        return this.vértices.size();
     }
 
     /**
@@ -136,7 +154,8 @@ public class Grafo {
      * @return TRUE se o grafo for completo, FALSE caso contrário
      */
     protected boolean completo() {
-        return this.ordem() == this.tamanho();
+        int n = this.ordem();
+        return this.tamanho() == (n * (n - 1)) / 2;
     }
 
     /**
@@ -145,7 +164,7 @@ public class Grafo {
      * @return TRUE se o grafo estiver vazio, FALSE caso contrário
      */
     protected boolean vazio() {
-        return this.vertices.isEmpty();
+        return this.vértices.isEmpty();
     }
 
     /**
@@ -156,22 +175,85 @@ public class Grafo {
      */
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder("Grafo " + this.nome + ": {");
-        Vértice[] vertices = this.vertices.allElements(new Vértice[this.vertices.size()]);
-        for (int i = 0; i < vertices.length; i++) {
-            Vértice v = vertices[i];
-            Aresta[] arestas = v.getArestas();
-            for (int j = 0; j < arestas.length; j++) {
-                Aresta a = arestas[j];
-                if (a.destino() > v.getId()) {
-                    str.append("{" + v.getId() + ", " + a.destino() + ", " + a.peso() + "}");
-                    if (j < arestas.length - 1 || i < vertices.length - 1)
-                        str.append(", ");
+        StringBuilder out = new StringBuilder("Grafo \"").append(this.NOME).append("\": {");
+        for (Vértice vértice : this.vértices.values())
+            for (Aresta aresta : vértice.getArestas())
+                if (aresta.destino() > vértice.getId())
+                    out.append("{").append(vértice.getId()).append(", ").append(aresta.destino())
+                            .append(aresta.peso() == -1 ? "" : ", " + aresta.peso()).append("}, ");
+        if (out.charAt(out.length() - 1) == ' ')
+            out.delete(out.length() - 2, out.length());
+        return out.append("}").toString();
+    }
+
+    /**
+     * Busca em largura no grafo
+     * 
+     * @param origem  Vértice de origem
+     * @param destino Vértice a ser encontrado
+     * @return O vértice encontrado, ou NULL caso contrário
+     */
+    protected Vértice buscaEmLargura(int origem, int destino) {
+        Vértice v = this.getVertice(origem);
+        if (v == null)
+            return null;
+        Vértice resultado = null;
+        Queue<Vértice> fila = new LinkedList<Vértice>();
+        Set<Vértice> visitados = new HashSet<Vértice>();
+        fila.add(v);
+        visitados.add(v);
+        System.out.print("\n Vértices visitados: ");
+        while (!fila.isEmpty()) {
+            Vértice vértice = fila.remove();
+            System.out.print(vértice.getId() + " ");
+            if (vértice.getId() == destino) {
+                resultado = vértice;
+                break;
+            }
+            for (Aresta a : vértice.getArestas()) {
+                Vértice destino_ = this.getVertice(a.destino());
+                if (!visitados.contains(destino_)) {
+                    fila.add(destino_);
+                    visitados.add(destino_);
                 }
             }
         }
-        str.append("}");
-        return new String(str);
+        return resultado;
+    }
+
+    /**
+     * Busca em profundidade no grafo
+     * 
+     * @param origem  Vértice de origem
+     * @param destino Vértice a ser encontrado
+     * @return O vértice encontrado, ou NULL caso contrário
+     */
+    protected Vértice buscaEmProfundidade(int origem, int destino) {
+        Vértice v = this.getVertice(origem);
+        if (v == null)
+            return null;
+        Vértice resultado = null;
+        Stack<Vértice> pilha = new Stack<Vértice>();
+        Set<Vértice> visitados = new HashSet<Vértice>();
+        pilha.push(v);
+        visitados.add(v);
+        System.out.print("\n Vértices visitados: ");
+        while (!pilha.isEmpty()) {
+            Vértice vértice = pilha.pop();
+            System.out.print(vértice.getId() + " ");
+            if (vértice.getId() == destino) {
+                resultado = vértice;
+                break;
+            }
+            for (Aresta a : vértice.getArestas()) {
+                Vértice destino_ = this.getVertice(a.destino());
+                if (!visitados.contains(destino_)) {
+                    pilha.push(destino_);
+                    visitados.add(destino_);
+                }
+            }
+        }
+        return resultado;
     }
 
 }
