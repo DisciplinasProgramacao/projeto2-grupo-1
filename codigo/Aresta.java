@@ -22,18 +22,32 @@
  * SOFTWARE.
  */
 
+/**
+ * Classe para arestas do grafo
+ */
 public class Aresta {
 
+    /**
+     * Define se a aresta aponta ou não para seu vizinho
+     */
     private boolean filho;
+
+    /**
+     * Define o peso e o destino da aresta
+     */
     private int peso;
+
+    /**
+     * Define o vértice de destino da aresta
+     */
     private int destino;
 
     /**
      * Construtor para arestas com peso. A aresta é criada como não-visitada.
      * 
-     * @param peso  Peso da aresta
-     * @param dest  Vértice de destino
-     * @param filho Indica se a aresta é filho ou não
+     * @param peso    Peso da aresta
+     * @param destino Vértice de destino
+     * @param filho   Indica se a aresta é filho ou não
      */
     public Aresta(int peso, int destino, boolean filho) {
         this.peso = peso;
@@ -44,7 +58,7 @@ public class Aresta {
     /**
      * Método de acesso para o peso da aresta
      * 
-     * @return Peso da aresta (int)
+     * @return Peso da aresta
      */
     public int peso() {
         return this.peso;
@@ -59,6 +73,11 @@ public class Aresta {
         return this.destino;
     }
 
+    /**
+     * Método de acesso para o destino da aresta
+     * 
+     * @return Id do vértice de destino
+     */
     public boolean filho() {
         return this.filho;
     }

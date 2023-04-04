@@ -1,3 +1,6 @@
+import java.util.Collection;
+import java.util.TreeMap;
+
 /** 
  * MIT License
  *
@@ -22,56 +25,71 @@
  * SOFTWARE.
  */
 
-/** Classe Vértice para um grafo */
+/**
+ * Classe para vértices do grafo
+ */
 public class Vértice {
 
-    /** Atributo para armazenar as arestas do vértice */
-    private ABB<Aresta> arestas;
+    /**
+     * Armazena as arestas do vértice
+     */
+    private TreeMap<Integer, Aresta> arestas;
 
-    /** Atributo para armazenar o ID do vértice */
+    /**
+     * Armazena o ID do vértice
+     */
     private final int ID;
 
     /**
-     * Construtor para criação de vértice identificado
+     * Cria um vértice com o ID indicado e sem arestas
      * 
      * @param ID Número/ID do vértice a ser criado (atributo final).
      */
     public Vértice(int ID) {
         this.ID = ID;
-        this.arestas = new ABB<Aresta>();
+        this.arestas = new TreeMap<Integer, Aresta>();
     }
 
     /**
      * Retorna o ID do vértice, caso seja necessário para verificações próprias
      * 
-     * @return Identificador do vértice (int)
+     * @return Identificador do vértice
      */
     public int getId() {
         return this.ID;
     }
 
     /**
-     * Adiciona uma aresta ponderada neste vértice para um destino
+     * Adiciona uma aresta neste vértice para um próximo vértice
      * 
-     * @param peso Peso da aresta
-     * @param dest Vértice de destino
+     * @param peso    Peso da aresta
+     * @param destino Vértice de destino
      * @return TRUE se foi inserida, FALSE caso já existisse e não foi inserida.
      */
     public boolean addAresta(int destino, int peso) {
-        return this.arestas.add(destino, new Aresta(peso, destino, true));
+        boolean result = false;
+        if (!this.arestas.containsKey(destino)) {
+            this.arestas.put(destino, new Aresta(peso, destino, true));
+            result = true;
+        }
+        return result;
     }
 
     /**
-     * Adiciona uma aresta ponderada neste vértice para um destino e indica se é
-     * filho ou não
+     * Adiciona uma aresta neste vértice para um próximo vértice
      * 
-     * @param peso  Peso da aresta
-     * @param dest  Vértice de destino
-     * @param filho Indica se a aresta é filho ou não
+     * @param peso    Peso da aresta
+     * @param destino Vértice de destino
+     * @param filho   TRUE se a aresta é para um filho, FALSE se é para um pai
      * @return TRUE se foi inserida, FALSE caso já existisse e não foi inserida.
      */
     public boolean addAresta(int destino, int peso, boolean filho) {
-        return this.arestas.add(destino, new Aresta(peso, destino, filho));
+        boolean result = false;
+        if (!this.arestas.containsKey(destino)) {
+            this.arestas.put(destino, new Aresta(peso, destino, filho));
+            result = true;
+        }
+        return result;
     }
 
     /**
@@ -81,19 +99,19 @@ public class Vértice {
      * @param destino Destino da aresta a ser retornada.
      * @return A aresta, ou null se não existir.
      */
-    public Aresta existeAresta(int destino) {
-        return this.arestas.contains(destino);
+    public Aresta getAresta(int destino) {
+        return this.arestas.containsKey(destino) ? this.arestas.get(destino) : null;
     }
 
     /**
-     * Remove e retorna a aresta para o destino indicado. Retorna null caso não
-     * exista a aresta.
+     * Remove a aresta para o destino indicado. Retorna null caso não exista a
+     * aresta.
      * 
      * @param destino Destino da aresta a ser removida.
      * @return A aresta removida, ou null se não existir.
      */
-    public void removeAresta(int destino) {
-        this.arestas.remove(destino);
+    public Aresta removeAresta(int destino) {
+        return this.arestas.remove(destino);
     }
 
     /**
@@ -110,8 +128,8 @@ public class Vértice {
      * 
      * @return Arestas do vértice
      */
-    public Aresta[] getArestas() {
-        return this.arestas.allElements(new Aresta[this.arestas.size()]);
+    public Collection<Aresta> getArestas() {
+        return this.arestas.values();
     }
 
 }
