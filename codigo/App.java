@@ -1,15 +1,30 @@
+import java.util.LinkedList;
+
+/**
+ * Classe principal do programa
+ * 
+ * @author Igor Pinheiro
+ */
 public class App {
+
+    /**
+     * Construtor vazio
+     */
+    App() {
+        System.out.println("\n Bem vindo ao programa de grafos");
+    }
+
     /**
      * Metodo que assegura a leitura de um inteiro do console
      * 
+     * @param mensagem mensagem a ser exibida ao usuario
      * @return um inteiro lido do console
      */
-    private static int lerInt() {
+    private static int lerInt(String mensagem) {
         try {
-            return Integer.parseInt(System.console().readLine());
+            return Integer.parseInt(System.console().readLine(mensagem));
         } catch (NumberFormatException e) {
-            System.out.println("Digite um número inteiro");
-            return lerInt();
+            return lerInt(" Digite um número inteiro\n ");
         }
     }
 
@@ -19,9 +34,16 @@ public class App {
      * @return açao escolhida na interface
      */
     private static int menuDirecionado() {
-        System.out.println(
-                "\n\n 1 - Gerar grafico por input\n 2 - Carregar grafo\n 3 - Gerar subgrafo\n 4 - Imprimir grafo\n 5 - Salvar grafo\n 0 - Sair");
-        return lerInt();
+        return lerInt("\n 1 - Gerar grafico por input"
+                + "\n 2 - Carregar grafo"
+                + "\n 3 - Gerar subgrafo"
+                + "\n 4 - Imprimir grafo"
+                + "\n 5 - Salvar grafo"
+                + "\n 6 - Verificar se é completo"
+                + "\n 7 - Busca em largura"
+                + "\n 8 - Busca em profundidade"
+                + "\n 0 - Sair\n " //
+        );
     }
 
     /**
@@ -30,19 +52,30 @@ public class App {
      * @return açao escolhida na interface
      */
     private static int menuNãoDirecionado() {
-        System.out.println(
-                "\n\n 1 - Gerar grafico por input\n 2 - Carregar grafo\n 3 - Gerar grafo completo\n 4 - Gerar subgrafo\n 5 - Imprimir grafo\n 6 - Salvar grafo\n 0 - Sair");
-        return lerInt();
+        return lerInt("\n 1 - Gerar grafico por input"
+                + "\n 2 - Carregar grafo"
+                + "\n 3 - Gerar grafo completo"
+                + "\n 4 - Gerar subgrafo"
+                + "\n 5 - Imprimir grafo"
+                + "\n 6 - Salvar grafo"
+                + "\n 7 - Verificar se é completo"
+                + "\n 8 - Busca em largura"
+                + "\n 9 - Busca em profundidade"
+                + "\n 0 - Sair\n " //
+        );
     }
 
+    /**
+     * Método principal
+     * 
+     * @param args Argumentos de linha de comando
+     */
     public static void main(String[] args) {
-        GrafoNãoDirecionado grafon = null;
-        GrafoDirecionado grafo = null;
-        String nome = System.console().readLine("\n Digite o nome do grafo: ");
-        // pergunta se o grafo é direcionado ou não direcionado
-        boolean direcionado = System.console().readLine("O grafo é direcionado? (s/n)").equals("s");
-        if (direcionado) {
-            grafo = new GrafoDirecionado(nome);
+        new App();
+        String nome = System.console().readLine(" Digite o nome do grafo: ");
+        nome = nome.isEmpty() ? "Meu_Grafo" : nome;
+        if (System.console().readLine(" O grafo " + nome + " é direcionado? (s/n)").contains("s")) {
+            GrafoDirecionado grafo = new GrafoDirecionado(nome);
             app: while (true)
                 switch (menuDirecionado()) {
                     case 1:
@@ -52,15 +85,15 @@ public class App {
                         grafo.carregar(nome + ".txt");
                         break;
                     case 3:
-                        System.out.println("Escolha quais vértices deseja manter, digite -1 para parar");
-                        Lista<Integer> vertices = new Lista<>();
+                        System.out.println("\n Escolha quais vértices deseja manter, digite -1 para parar");
+                        LinkedList<Integer> vertices = new LinkedList<>();
                         while (true) {
-                            int v = lerInt();
+                            int v = lerInt(" ");
                             if (v == -1)
                                 break;
                             vertices.add(v);
                         }
-                        grafo = (GrafoDirecionado) grafo.subGrafo(vertices);
+                        System.out.println("\n Subgrafo: " + grafo.subGrafo(vertices));
                         break;
                     case 4:
                         System.out.println("\n" + grafo.toString());
@@ -68,51 +101,90 @@ public class App {
                     case 5:
                         grafo.salvar(nome + ".txt");
                         break;
+                    case 6:
+                        System.out.println(grafo.completo() ? "\n É completo" : "\n Não é completo");
+                        break;
+                    case 7:
+                        try {
+                            System.out.println("\n Vértice encontrado: "
+                                    + grafo.buscaEmLargura(lerInt(" Digite o vértice de origem: "),
+                                            lerInt(" Digite o vértice de destino: ")).getId());
+                        } catch (NullPointerException e) {
+                            System.out.println("\n Vértice não encontrado");
+                        }
+                        break;
+                    case 8:
+                        try {
+                            System.out.println("\n Vértice encontrado: "
+                                    + grafo.buscaEmProfundidade(lerInt(" Digite o vértice de origem: "),
+                                            lerInt(" Digite o vértice de destino: ")).getId());
+                        } catch (NullPointerException e) {
+                            System.out.println("\n Vértice não encontrado");
+                        }
+                        break;
                     case 0:
                         break app;
                 }
+            if (System.console().readLine("\n Salvar grafo? (s/n)").contains("s"))
+                grafo.salvar(grafo.NOME + ".txt");
         } else {
-            grafon = new GrafoNãoDirecionado(nome);
+            GrafoNãoDirecionado grafo = new GrafoNãoDirecionado(nome);
             app: while (true)
                 switch (menuNãoDirecionado()) {
                     case 1:
-                        grafon.criar();
+                        grafo.criar();
                         break;
                     case 2:
-                        grafon.carregar(nome + ".txt");
+                        grafo.carregar(nome + ".txt");
                         break;
                     case 3:
-                        System.out.println("Digite o número de vértices: ");
-                        grafon = new GrafoCompleto(grafon.nome, lerInt()).toGrafo(); // cria um grafo completo e
-                                                                                     // converte para grafo
-                                                                                     // mutável para impressão
+                        System.out.println(
+                                new GrafoCompleto(grafo.NOME, lerInt("\n Digite o número de vértices: ")));
                         break;
                     case 4:
-                        System.out.println("Escolha quais vértices deseja manter, digite -1 para parar");
-                        Lista<Integer> vertices = new Lista<>();
+                        System.out.println("\n Escolha quais vértices deseja manter, digite -1 para parar");
+                        LinkedList<Integer> vertices = new LinkedList<>();
                         while (true) {
-                            int v = lerInt();
+                            int v = lerInt(" ");
                             if (v == -1)
                                 break;
                             vertices.add(v);
                         }
-                        grafon = (GrafoNãoDirecionado) grafon.subGrafo(vertices);
+                        System.out.println("\n Subgrafo: " + grafo.subGrafo(vertices));
                         break;
                     case 5:
-                        System.out.println("\n" + grafon.toString());
+                        System.out.println("\n" + grafo);
                         break;
                     case 6:
-                        grafon.salvar(grafon.nome + ".txt");
+                        grafo.salvar(grafo.NOME + ".txt");
+                        break;
+                    case 7:
+                        System.out.println(grafo.completo() ? "\n É completo" : "\n Não é completo");
+                        break;
+                    case 8:
+                        try {
+                            System.out.println("\n Vértice encontrado: "
+                                    + grafo.buscaEmLargura(lerInt(" Digite o vértice de origem: "),
+                                            lerInt(" Digite o vértice de destino: ")).getId());
+                        } catch (NullPointerException e) {
+                            System.out.println("\n Vértice não encontrado");
+                        }
+                        break;
+                    case 9:
+                        try {
+                            System.out.println("\n Vértice encontrado: "
+                                    + grafo.buscaEmProfundidade(lerInt(" Digite o vértice de origem: "),
+                                            lerInt(" Digite o vértice de destino: ")).getId());
+                        } catch (NullPointerException e) {
+                            System.out.println("\n Vértice não encontrado");
+                        }
                         break;
                     case 0:
                         break app;
                 }
+            if (System.console().readLine("\n Salvar grafo? (s/n)").contains("s"))
+                grafo.salvar(grafo.NOME + ".txt");
         }
-        System.out.println("Salvar grafo? (s/n)");
-        if (direcionado && System.console().readLine().equals("s"))
-            grafo.salvar(grafo.nome + ".txt");
-        else if (System.console().readLine().equals("s"))
-            grafon.salvar(grafon.nome + ".txt");
     }
 
 }
