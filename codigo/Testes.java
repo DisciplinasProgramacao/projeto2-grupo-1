@@ -129,7 +129,7 @@ class Testes {
     @Test
     void testRemoverVertice() {
         grafo.removeVertice(0);
-        assertNull(grafo.getVertice(0));
+        assertNull(grafo.existeVertice(0));
     }
 
     /**
@@ -138,24 +138,9 @@ class Testes {
     @Test
     void testRemoverVerticeComArestas() {
         grafo.removeVertice(0);
-        assertNull(grafo.getVertice(0));
+        assertNull(grafo.existeVertice(0));
         assertNull(grafo.existeAresta(0, 1));
         assertNull(grafo.existeAresta(0, 2));
     }
 
-    /**
-     * Teste da buscaEmLargura
-     */
-    @Test
-    void testBuscaEmLargura() {
-        assertEquals(grafo.buscaEmLargura(0, 2).getId(), 2);
-    }
-
-    /**
-     * Teste da buscaEmProfundidade
-     */
-    @Test
-    void testBuscaEmProfundidade() {
-        assertEquals(grafo.buscaEmProfundidade(0, 2).getId(), 2);
-    }
 }

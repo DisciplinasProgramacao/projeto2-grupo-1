@@ -4,11 +4,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
-import java.io.StringWriter;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonWriter;
 
 /**
  * Grafo mutável
@@ -43,8 +38,8 @@ public class GrafoMutável extends Grafo {
      * @param destino Vértice de destino
      */
     protected void removeAresta(int origem, int destino) {
-        Vértice saida = this.getVertice(origem);
-        Vértice chegada = this.getVertice(destino);
+        Vértice saida = this.existeVertice(origem);
+        Vértice chegada = this.existeVertice(destino);
         if (saida != null && chegada != null) {
             saida.removeAresta(destino);
             chegada.removeAresta(origem);
@@ -73,10 +68,10 @@ public class GrafoMutável extends Grafo {
             int origem = Integer.parseInt(input[0]),
                     destino = Integer.parseInt(input[1]),
                     peso = Integer.parseInt(input[2]);
-            if (this.getVertice(origem) == null)
+            if (this.existeVertice(origem) == null)
                 System.out.println(this.addVertice(origem) ? " Vértice " + origem + " adicionado."
                         : " Vértice " + origem + " não adicionado.");
-            if (this.getVertice(destino) == null)
+            if (this.existeVertice(destino) == null)
                 System.out.println(this.addVertice(destino) ? " Vértice " + destino + " adicionado."
                         : " Vértice " + destino + " não adicionado.");
             System.out.println(this.addAresta(origem, destino, peso)
@@ -95,12 +90,12 @@ public class GrafoMutável extends Grafo {
     protected GrafoMutável subGrafo(LinkedList<Integer> lista_v) {
         GrafoMutável subgrafo = new GrafoMutável("Subgrafo de " + this.NOME);
         for (int id : lista_v.toArray(new Integer[lista_v.size()]))
-            if (this.getVertice(id) != null)
+            if (this.existeVertice(id) != null)
                 subgrafo.addVertice(id);
         for (int id : lista_v.toArray(new Integer[lista_v.size()]))
-            for (Aresta a : this.getVertice(id).getArestas())
-                if (subgrafo.getVertice(a.destino()) != null)
-                    subgrafo.addAresta(subgrafo.getVertice(id).getId(), a.destino(), a.peso());
+            for (Aresta a : this.existeVertice(id).getArestas())
+                if (subgrafo.existeVertice(a.destino()) != null)
+                    subgrafo.addAresta(subgrafo.existeVertice(id).getId(), a.destino(), a.peso());
         return subgrafo;
     }
 
@@ -111,7 +106,6 @@ public class GrafoMutável extends Grafo {
      * 
      * @param nomeArquivo Nome do arquivo a ser carregado
      */
-    @Deprecated
     protected void carregar(String nomeArquivo) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(nomeArquivo));
@@ -121,10 +115,10 @@ public class GrafoMutável extends Grafo {
                 int origem = Integer.parseInt(valores[0]),
                         destino = Integer.parseInt(valores[1]),
                         peso = Integer.parseInt(valores[2]);
-                if (this.getVertice(origem) == null)
+                if (this.existeVertice(origem) == null)
                     System.out.println(this.addVertice(origem) ? " Vértice " + origem + " adicionado."
                             : "");
-                if (this.getVertice(destino) == null)
+                if (this.existeVertice(destino) == null)
                     System.out.println(this.addVertice(destino) ? " Vértice " + destino + " adicionado."
                             : "");
                 System.out.println(this.addAresta(origem, destino, peso)
@@ -144,7 +138,6 @@ public class GrafoMutável extends Grafo {
      * 
      * @param nomeArquivo Nome do arquivo a ser salvo
      */
-    @Deprecated
     protected void salvar(String nomeArquivo) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(nomeArquivo));
