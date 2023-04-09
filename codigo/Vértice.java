@@ -41,6 +41,11 @@ public class Vértice {
     private final int ID;
 
     /**
+     * Armazena o valor do vértice
+     */
+    private boolean visitado = false;
+
+    /**
      * Cria um vértice com o ID indicado e sem arestas
      * 
      * @param ID Número/ID do vértice a ser criado (atributo final).
@@ -48,6 +53,20 @@ public class Vértice {
     public Vértice(int ID) {
         this.ID = ID;
         this.arestas = new TreeMap<Integer, Aresta>();
+    }
+
+    /**
+     * Define se o vértice foi visitado ou não
+     */
+    public void setVisitado(boolean visitado) {
+        this.visitado = visitado;
+    }
+
+    /**
+     * Retorna se o vértice foi visitado ou não
+     */
+    public boolean getVisitado() {
+        return this.visitado;
     }
 
     /**
