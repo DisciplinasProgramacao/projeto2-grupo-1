@@ -29,8 +29,8 @@ public class GrafoDirecionado extends GrafoMutável {
     @Override
     public boolean addAresta(int origem, int destino, int peso) {
         boolean adicionou = false;
-        Vértice saida = this.getVertice(origem);
-        Vértice chegada = this.getVertice(destino);
+        Vértice saida = this.existeVertice(origem);
+        Vértice chegada = this.existeVertice(destino);
         if (saida != null && chegada != null)
             adicionou = (saida.addAresta(destino, peso, false) && chegada.addAresta(origem, peso, true));
         return adicionou;
@@ -59,10 +59,10 @@ public class GrafoDirecionado extends GrafoMutável {
             int origem = Integer.parseInt(input[0]),
                     destino = Integer.parseInt(input[1]),
                     peso = Integer.parseInt(input[2]);
-            if (this.getVertice(origem) == null)
+            if (this.existeVertice(origem) == null)
                 System.out.println(this.addVertice(origem) ? "Vértice " + origem + " adicionado."
                         : "Vértice " + origem + " não adicionado.");
-            if (this.getVertice(destino) == null)
+            if (this.existeVertice(destino) == null)
                 System.out.println(this.addVertice(destino) ? "Vértice " + destino + " adicionado."
                         : "Vértice " + destino + " não adicionado.");
             System.out.println(this.addAresta(origem, destino, peso)
@@ -88,10 +88,10 @@ public class GrafoDirecionado extends GrafoMutável {
                 int origem = Integer.parseInt(valores[0]),
                         destino = Integer.parseInt(valores[1]),
                         peso = Integer.parseInt(valores[2]);
-                if (this.getVertice(origem) == null)
+                if (this.existeVertice(origem) == null)
                     System.out.println(this.addVertice(origem) ? " Vértice " + origem + " adicionado."
                             : "");
-                if (this.getVertice(destino) == null)
+                if (this.existeVertice(destino) == null)
                     System.out.println(this.addVertice(destino) ? " Vértice " + destino + " adicionado."
                             : "");
                 System.out.println(this.addAresta(origem, destino, peso)
