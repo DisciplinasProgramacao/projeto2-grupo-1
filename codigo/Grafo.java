@@ -1,8 +1,8 @@
 import java.util.TreeMap;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 import java.util.Stack;
 
 /** 
@@ -82,7 +82,7 @@ abstract public class Grafo {
      * @param idVertice O identificador do vértice a ser retornado
      * @return O vértice, ou NULL caso contrário
      */
-    protected Vértice getVertice(int idVertice) {
+    protected Vértice existeVertice(int idVertice) {
         return this.vértices.containsKey(idVertice) ? this.vértices.get(idVertice) : null;
     }
 
@@ -99,8 +99,8 @@ abstract public class Grafo {
      */
     protected boolean addAresta(int origem, int destino, int peso) {
         boolean adicionou = false;
-        Vértice saida = this.getVertice(origem);
-        Vértice chegada = this.getVertice(destino);
+        Vértice saida = this.existeVertice(origem);
+        Vértice chegada = this.existeVertice(destino);
         if (saida != null && chegada != null)
             adicionou = (saida.addAresta(destino, peso) && chegada.addAresta(origem, peso));
         return adicionou;
@@ -118,8 +118,8 @@ abstract public class Grafo {
      */
     protected Aresta existeAresta(int verticeA, int verticeB) {
         Aresta aresta = null;
-        Vértice saida = this.getVertice(verticeA);
-        Vértice chegada = this.getVertice(verticeB);
+        Vértice saida = this.existeVertice(verticeA);
+        Vértice chegada = this.existeVertice(verticeB);
         if (saida != null && chegada != null) {
             aresta = saida.getAresta(verticeB);
         }
@@ -187,73 +187,111 @@ abstract public class Grafo {
     }
 
     /**
-     * Busca em largura no grafo
+     * verifica se todos os vértices do grafo foram visitados
      * 
-     * @param origem  Vértice de origem
-     * @param destino Vértice a ser encontrado
-     * @return O vértice encontrado, ou NULL caso contrário
+     * @return TRUE se todos os vértices foram visitados, FALSE caso contrário
      */
-    protected Vértice buscaEmLargura(int origem, int destino) {
-        Vértice v = this.getVertice(origem);
+    private boolean todosVisitados() {
+        for (Vértice v : this.vértices.values()) {
+            if (!v.getVisitado())
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * Busca em largura no grafo, usa os métodos getVisitado() e
+     * setVisitado(boolean)
+     * 
+     * @param origem Vértice de origem
+     */
+    protected void buscaEmLargura(int origem) {
+        Vértice v = this.existeVertice(origem);
         if (v == null)
-            return null;
-        Vértice resultado = null;
+            return;
+        // Marca o vértice de origem como visitado e adiciona à fila
+        v.setVisitado(true);
         Queue<Vértice> fila = new LinkedList<Vértice>();
-        Set<Vértice> visitados = new HashSet<Vértice>();
         fila.add(v);
-        visitados.add(v);
-        System.out.print("\n Vértices visitados: ");
         while (!fila.isEmpty()) {
-            Vértice vértice = fila.remove();
-            System.out.print(vértice.getId() + " ");
-            if (vértice.getId() == destino) {
-                resultado = vértice;
-                break;
-            }
-            for (Aresta a : vértice.getArestas()) {
-                Vértice destino_ = this.getVertice(a.destino());
-                if (!visitados.contains(destino_)) {
-                    fila.add(destino_);
-                    visitados.add(destino_);
+            // Lista para armazenar os vértices visitados neste nível
+            List<Vértice> vertices = new ArrayList<Vértice>();
+
+            // Visita todos os vértices no nível atual
+            while (!fila.isEmpty()) {
+                v = fila.remove();
+                vertices.add(v);
+                for (Aresta a : v.getArestas()) {
+                    Vértice w = this.existeVertice(a.destino());
+                    if (!w.getVisitado()) {
+                        w.setVisitado(true);
+                        fila.add(w);
+                    }
                 }
             }
+
+            System.out.print(" ");
+            // Imprime os vértices visitados no nível atual
+            for (Vértice v_ : vertices) {
+                System.out.print(v_.getId() + " ");
+            }
+            System.out.println(" ");
         }
-        return resultado;
+
+        if (!this.todosVisitados()) {
+            for (Vértice v_ : this.vértices.values())
+                if (!v_.getVisitado()) {
+                    // Inicia a busca em largura a partir deste vértice
+                    this.buscaEmLargura(v_.getId());
+                    break;
+                }
+            for (Vértice v_ : this.vértices.values())
+                v_.setVisitado(false);
+        }
     }
 
     /**
      * Busca em profundidade no grafo
      * 
-     * @param origem  Vértice de origem
-     * @param destino Vértice a ser encontrado
-     * @return O vértice encontrado, ou NULL caso contrário
+     * @param origem Vértice de origem
      */
-    protected Vértice buscaEmProfundidade(int origem, int destino) {
-        Vértice v = this.getVertice(origem);
+    protected void buscaEmProfundidade(int origem) {
+        Vértice v = this.existeVertice(origem);
         if (v == null)
-            return null;
-        Vértice resultado = null;
+            return;
+        // Mantem a ordem dos vértices a serem visitados
         Stack<Vértice> pilha = new Stack<Vértice>();
-        Set<Vértice> visitados = new HashSet<Vértice>();
+        v.setVisitado(true);
         pilha.push(v);
-        visitados.add(v);
-        System.out.print("\n Vértices visitados: ");
+        System.out.print(" ");
+
         while (!pilha.isEmpty()) {
             Vértice vértice = pilha.pop();
             System.out.print(vértice.getId() + " ");
-            if (vértice.getId() == destino) {
-                resultado = vértice;
-                break;
-            }
+
+            // Para cada aresta do vértice visitado
             for (Aresta a : vértice.getArestas()) {
-                Vértice destino_ = this.getVertice(a.destino());
-                if (!visitados.contains(destino_)) {
+                Vértice destino_ = this.existeVertice(a.destino());
+
+                if (!destino_.getVisitado()) {
+                    destino_.setVisitado(true);
                     pilha.push(destino_);
-                    visitados.add(destino_);
                 }
             }
         }
-        return resultado;
+        System.out.println();
+
+        if (!this.todosVisitados()) {
+            for (Vértice v_ : this.vértices.values())
+                // Se o vértice ainda não foi visitado
+                if (!v_.getVisitado()) {
+                    // Inicia a busca em profundidade a partir deste vértice
+                    this.buscaEmProfundidade(v_.getId());
+                    break;
+                }
+            for (Vértice v_ : this.vértices.values())
+                v_.setVisitado(false);
+        }
     }
 
 }
