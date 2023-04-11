@@ -42,6 +42,7 @@ public class App {
                 + "\n 6 - Verificar se é completo"
                 + "\n 7 - Busca em largura"
                 + "\n 8 - Busca em profundidade"
+                + "\n 9 - Verificar tamanho, ordem e se o grafo é completo"
                 + "\n 0 - Sair\n " //
         );
     }
@@ -61,6 +62,7 @@ public class App {
                 + "\n 7 - Verificar se é completo"
                 + "\n 8 - Busca em largura"
                 + "\n 9 - Busca em profundidade"
+                + "\n 10 - Verificar tamanho, ordem e se o grafo é completo"
                 + "\n 0 - Sair\n " //
         );
     }
@@ -105,22 +107,14 @@ public class App {
                         System.out.println(grafo.completo() ? "\n É completo" : "\n Não é completo");
                         break;
                     case 7:
-                        try {
-                            System.out.println("\n Vértice encontrado: "
-                                    + grafo.buscaEmLargura(lerInt(" Digite o vértice de origem: "),
-                                            lerInt(" Digite o vértice de destino: ")).getId());
-                        } catch (NullPointerException e) {
-                            System.out.println("\n Vértice não encontrado");
-                        }
+                        grafo.buscaEmLargura(lerInt(" Digite o vértice de origem: "));
                         break;
                     case 8:
-                        try {
-                            System.out.println("\n Vértice encontrado: "
-                                    + grafo.buscaEmProfundidade(lerInt(" Digite o vértice de origem: "),
-                                            lerInt(" Digite o vértice de destino: ")).getId());
-                        } catch (NullPointerException e) {
-                            System.out.println("\n Vértice não encontrado");
-                        }
+                        grafo.buscaEmProfundidade(lerInt(" Digite o vértice de origem: "));
+                        break;
+                    case 9:
+                        System.out.println("\n Tamanho: " + grafo.tamanho() + "\n Ordem: " + grafo.ordem()
+                                + (grafo.completo() ? "\n É completo" : "\n Não é completo"));
                         break;
                     case 0:
                         break app;
@@ -162,22 +156,14 @@ public class App {
                         System.out.println(grafo.completo() ? "\n É completo" : "\n Não é completo");
                         break;
                     case 8:
-                        try {
-                            System.out.println("\n Vértice encontrado: "
-                                    + grafo.buscaEmLargura(lerInt(" Digite o vértice de origem: "),
-                                            lerInt(" Digite o vértice de destino: ")).getId());
-                        } catch (NullPointerException e) {
-                            System.out.println("\n Vértice não encontrado");
-                        }
+                        grafo.buscaEmLargura(lerInt(" Digite o vértice de origem: "));
                         break;
                     case 9:
-                        try {
-                            System.out.println("\n Vértice encontrado: "
-                                    + grafo.buscaEmProfundidade(lerInt(" Digite o vértice de origem: "),
-                                            lerInt(" Digite o vértice de destino: ")).getId());
-                        } catch (NullPointerException e) {
-                            System.out.println("\n Vértice não encontrado");
-                        }
+                        grafo.buscaEmProfundidade(lerInt(" Digite o vértice de origem: "));
+                        break;
+                    case 10:
+                        System.out.println("\n Tamanho: " + grafo.tamanho() + "\n Ordem: " + grafo.ordem()
+                                + (grafo.completo() ? "\n É completo" : "\n Não é completo"));
                         break;
                     case 0:
                         break app;
